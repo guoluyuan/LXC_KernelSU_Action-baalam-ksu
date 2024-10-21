@@ -107,9 +107,22 @@ jobs:
       if: env.ENABLE_KERNELSU == 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        export GKI_ROOT=$GITHUB_WORKSPACE
+        export KD=${{ env.KERNEL_CONFIG }}
+        export DRIVER_DIR="$GITHUB_WORKSPACE/kernel_workspace/android-kernel/drivers"
+        export DRIVER_MAKEFILE="$DRIVER_DIR/Makefile"
+        ln -sf "$GKI_ROOT/KernelSU/kernel" "$DRIVER_DIR/kernelsu"
+        sed -i '$a\obj-y += kernelsu/' "$DRIVER_MAKEFILE"
+        
+        git clone -b main https://gitee.com/mirrors/KernelSU.git KernelSU
         curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s ${{ env.KERNELSU_TAG }}
         echo "UPLOADNAME=-KernelSU" >> $GITHUB_ENV
-
+        echo "CONFIG_KPROBES=y" >> "$GKI_ROOT/arch/arm64/configs/${KD}"
+        echo "CONFIG_HAVE_KPROBES=y" >> "$GKI_ROOT/arch/arm64/configs/${KD}"
+        echo "CONFIG_KPROBE_EVENTS=y" >> "$GKI_ROOT/arch/arm64/configs/${KD}"
+        #下面2项，按情况选择吧。
+        echo "CONFIG_OVERLAY_FS=y" >> "$GKI_ROOT/arch/arm64/configs/${KD}"
+        echo "CONFIG_MODULES=y" >> "$GKI_ROOT/arch/arm64/configs/${KD}"
     - name: Setup Configuration for Kernel
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
