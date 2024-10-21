@@ -107,7 +107,7 @@ jobs:
       if: env.ENABLE_KERNELSU == 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        ln -sf "$GITHUB_WORKSPACE/KernelSU/kernel" "drivers/kernelsu"
+        ln -sf "KernelSU/kernel" "drivers/kernelsu"
         sed -i '$a\obj-y += kernelsu/' "drivers/Makefile"
         git clone -b main https://gitee.com/mirrors/KernelSU.git KernelSU
         #curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s ${{ env.KERNELSU_TAG }}
