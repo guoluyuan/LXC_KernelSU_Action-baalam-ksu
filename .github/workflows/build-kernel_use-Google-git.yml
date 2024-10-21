@@ -106,18 +106,9 @@ jobs:
     - name: Setup KernelSU
       if: env.ENABLE_KERNELSU == 'true'
       run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        ln -sf KernelSU/kernel drivers/kernelsu
-        sed -i '$a\obj-y += kernelsu/' drivers/Makefile
-        git clone -b main https://gitee.com/mirrors/KernelSU.git KernelSU
-        #curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s ${{ env.KERNELSU_TAG }}
-        echo "UPLOADNAME=-KernelSU" >> $GITHUB_ENV
-        echo "CONFIG_KPROBES=y" >> arch/arm64/configs/${{ env.KERNEL_CONFIG }}
-        echo "CONFIG_HAVE_KPROBES=y" >> arch/arm64/configs/${{ env.KERNEL_CONFIG }}
-        echo "CONFIG_KPROBE_EVENTS=y" >> arch/arm64/configs/${{ env.KERNEL_CONFIG }}
-        #下面2项，按情况选择吧。
-        echo "CONFIG_OVERLAY_FS=y" >> arch/arm64/configs/${{ env.KERNEL_CONFIG }}
-        echo "CONFIG_MODULES=y" >> arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+          cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+          curl -LSs "https://raw.githubusercontent.com/guoluyuan/LXC_KernelSU_Action-baalam-ksu/refs/heads/main/setup.sh" | bash -s ${{ env.KERNELSU_TAG }}
+          echo "UPLOADNAME=-KernelSU" >> $GITHUB_ENV
     - name: Setup Configuration for Kernel
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
